@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MENU</title>
+        <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: rgb(0, 0, 0);
+            background-size: cover;
+        }
+        #game{
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 1%;
+            position: relative;
+            width: 528px;
+            height: 528px;
+            z-index: -2;
+            background: url(fond1.jpg);
+            background-size: cover;
+        }
+        #game * {
+            position:absolute;
+            width:48px;
+            height:48px;
+        }
+        .mur{
+            /*background: url('mur.png') no-repeat left top;*/
+        }
+        .sol{
+            /*background: url('sol.png') no-repeat left top;*/
+            z-index: -1;
+        }
+        .pac{
+            background: url('pac.png') no-repeat left top;
+            animation:  sprite4 .4s steps(4) infinite;
+            z-index: 1;
+        }
+        .mars{
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            display: none;
+            text-align: center;
+            scrollbar-base-color: rgba(255, 0, 255,0);
+        }
+        .saturne{
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            display: none;
+            text-align: center;
+            scrollbar-base-color: rgba(255, 0, 255,0);
+        }
+        h1{
+            color: black;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 70%;
+            margin-left: 10%;
+            margin-right: 10%;
+        }
+        p{
+            background-color: rgba(39, 37, 37, 0.39);
+            font-size: 25pxs;
+            margin-left: 10%;
+            margin-right: 10%;
+            margin-top: 900px;
+        }
+        img[class=planète]{
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: -1;
+            width: 100%;
+        }
+        .x0{
+            left: 0px;
+        }
+        .x1{
+            left: 48px;
+        }
+        .x2{
+            left: 96px;
+        }
+        .x3{
+            left: 144px;
+        }
+        .x4{
+            left: 192px;
+        }
+        .x5{
+            left: 240px;
+        }
+        .x6{
+            left: 288px;
+        }
+        .x7{
+            left: 336px;
+        }
+        .x8{
+            left: 384px;
+        }
+        .x9{
+            left: 432px;
+        }
+        .x10{
+            left: 480px;
+        }
+        .y0{
+            top: 0px;
+        }
+        .y1{
+            top: 48px;
+        }
+        .y2{
+            top: 96px;
+        }
+        .y3{
+            top: 144px;
+        }
+        .y4{
+            top: 192px;
+        }
+        .y5{
+            top: 240px;
+        }
+        .y6{
+            top: 288px;
+        }
+        .y7{
+            top: 336px;
+        }
+        .y8{
+            top: 384px;
+        }
+        .y9{
+            top: 432px;
+        }
+        .y10{
+            top: 480px;
+        }
+        @keyframes sprite4 {
+                100% { background-position-x: -192px; } /* -tailleCase * 4 */
+        }
+        </style>
+        <script src="jquery.js"></script>
+        <script>
+            var fps = 1000 / 30;
+            var tailleCase = 48;
+            var vitesseMax = 6;
+            var speedP = 5;
+            var vitesseMax = 6;
+            
+            var pac = {
+                position: [240, 240],
+                positionDepart: [240, 240],
+                direction: 's',
+                nextDirection: 's'
+            };
+            var directions = {// tableau de conversion
+                h: [0, -1],
+                d: [1, 0],
+                b: [0, 1],
+                g: [-1, 0],
+                s: [0, 0]
+            };
+            var bg = {// @option pr les sprites directions => position y du bg en fonction de la direction
+                h: -144,
+                d: -96,
+                b: 0,
+                g: -48
+            };
+
+            
+
+            /*---------------
+            -----BOUCLE------
+            ---------------*/
+            setInterval(function(){
+                /*SPRITES*/
+                pac.direction = pac.nextDirection;
+                $('.pac').css({backgroundPositionY: bg[pac.direction]});
+
+                if(pac.position[0]==0 && pac.direction=='g' &&  192<pac.position[1] && pac.position[1]<336){//PORTE 1 VERS MARS
+                    mars();
+                }
+                if(pac.position[0]==480 && pac.direction=='d' &&  192<pac.position[1] && pac.position[1]<336){//PORTE 2 VERS SATURNE
+                    saturne();
+                }
+
+                /*Limites de la zone*/
+                if(pac.position[0]==0 && pac.direction=='g' || pac.position[0]==480 && pac.direction=='d' 
+                || pac.position[1]==45 && pac.direction=='h' || pac.position[1]==480 && pac.direction=='b'){
+                    pac.nextDirection = 's';
+                    pac.direction = 's'                
+                }
+                // applique mvt
+                pac.position[0] += directions[pac.direction][0] * speedP;
+                pac.position[1] += directions[pac.direction][1] * speedP;
+                move($('.pac'), pac.position);
+
+            }, fps);
+
+            /*-------------------
+            --Détection Clavier--
+            -------------------*/
+            addEventListener("keydown", function (e) {
+                switch (e.keyCode) {
+                    case 39: // droite
+                        e.preventDefault(); // a mettre ici sinon preventDefault() tout les raccourcis habituels
+                        pac.nextDirection = 'd';
+                        break;
+                    case 37: // gauche
+                        e.preventDefault();
+                        pac.nextDirection = 'g';
+                        break;
+                    case 38: // haut
+                        e.preventDefault();
+                        pac.nextDirection = 'h';
+                        break;
+                    case 40: // bas
+                        e.preventDefault();
+                        pac.nextDirection = 'b';
+                        break;
+                }
+            });
+
+            /*Fonction Pour Charger Mars*/
+            function mars(){
+                document.getElementById('game').style.display = "none";
+                document.getElementById('menu').style.display = "none";
+                document.title = "MARS"
+                document.getElementById('conteneur').style.display = "none";
+                document.getElementsByClassName('mars')[0].style.display = "block";
+            }
+
+            /*Fonction Pour Charger Saturne*/
+            function saturne(){
+                document.getElementById('game').style.display = "none";
+                document.getElementById('menu').style.display = "none";
+                document.title = "SATURNE"
+                document.getElementById('conteneur').style.display = "none";
+                document.getElementsByClassName('saturne')[0].style.display = "block";
+            }
+
+            /*Fonction-Déplacement*/
+            function move(elm, pos) {
+                var x = pos[0];
+                var y = pos[1];
+                elm.css({left: x, top: y});
+            }
+        </script>
+    </head>
+    <body>
+        <div id="menu" style="font-size: 50px;color: white;text-align: center;">MENU</div>
+    <div id="conteneur" style="display: flex; justify-content: space-between;">
+        <div id="MenuMars" style="font-size: 50px;color: orangered;text-align: center;float: left;margin-top: 19%;margin-left: 10%;">Mars</div>
+        <div id="game">
+            <div class="mur x0 y0"></div>
+            <div class="mur x0 y1"></div>
+            <div class="mur x0 y2"></div>
+            <div class="mur x0 y3"></div>
+            <div class="sol x0 y4"></div>
+            <div class="sol x0 y5"></div>
+            <div class="sol x0 y6"></div>
+            <div class="mur x0 y7"></div>
+            <div class="mur x0 y8"></div>
+            <div class="mur x0 y9"></div>
+            <div class="mur x0 y10"></div>
+            
+            <div class="mur x1 y0"></div>
+            <div class="mur x1 y1"></div>
+            <div class="mur x1 y2"></div>
+            <div class="mur x1 y3"></div>
+            <div class="sol x1 y4"></div>
+            <div class="sol x1 y5"></div>
+            <div class="sol x1 y6"></div>
+            <div class="mur x1 y7"></div>
+            <div class="mur x1 y8"></div>
+            <div class="mur x1 y9"></div>
+            <div class="mur x1 y10"></div>
+
+            <div class="mur x2 y0"></div>
+            <div class="mur x2 y1"></div>
+            <div class="mur x2 y2"></div>
+            <div class="mur x2 y3"></div>
+            <div class="sol x2 y4"></div>
+            <div class="sol x2 y5"></div>
+            <div class="sol x2 y6"></div>
+            <div class="mur x2 y7"></div>
+            <div class="mur x2 y8"></div>
+            <div class="mur x2 y9"></div>
+            <div class="mur x2 y10"></div>
+
+            <div class="mur x3 y0"></div>
+            <div class="mur x3 y1"></div>
+            <div class="mur x3 y2"></div>
+            <div class="mur x3 y3"></div>
+            <div class="sol x3 y4"></div>
+            <div class="sol x3 y5"></div>
+            <div class="sol x3 y6"></div>
+            <div class="mur x3 y7"></div>
+            <div class="mur x3 y8"></div>
+            <div class="mur x3 y9"></div>
+            <div class="mur x3 y10"></div>
+
+            <div class="sol x4 y0"></div>
+            <div class="sol x4 y1"></div>
+            <div class="sol x4 y2"></div>
+            <div class="sol x4 y3"></div>
+            <div class="sol x4 y4"></div>
+            <div class="sol x4 y5"></div>
+            <div class="sol x4 y6"></div>
+            <div class="sol x4 y7"></div>
+            <div class="sol x4 y8"></div>
+            <div class="sol x4 y9"></div>
+            <div class="sol x4 y10"></div>
+
+            <div class="sol x5 y0"></div>
+            <div class="sol x5 y1"></div>
+            <div class="sol x5 y2"></div>
+            <div class="sol x5 y3"></div>
+            <div class="sol x5 y4"></div>
+            <div class="sol x5 y5 pac"></div>
+            <div class="sol x5 y6"></div>
+            <div class="sol x5 y7"></div>
+            <div class="sol x5 y8"></div>
+            <div class="sol x5 y9"></div>
+            <div class="sol x5 y10"></div>
+            
+            <div class="sol x6 y0"></div>
+            <div class="sol x6 y1"></div>
+            <div class="sol x6 y2"></div>
+            <div class="sol x6 y3"></div>
+            <div class="sol x6 y4"></div>
+            <div class="sol x6 y5"></div>
+            <div class="sol x6 y6"></div>
+            <div class="sol x6 y7"></div>
+            <div class="sol x6 y8"></div>
+            <div class="sol x6 y9"></div>
+            <div class="sol x6 y10"></div>
+
+            <div class="mur x7 y0"></div>
+            <div class="mur x7 y1"></div>
+            <div class="mur x7 y2"></div>
+            <div class="mur x7 y3"></div>
+            <div class="sol x7 y4"></div>
+            <div class="sol x7 y5"></div>
+            <div class="sol x7 y6"></div>
+            <div class="mur x7 y7"></div>
+            <div class="mur x7 y8"></div>
+            <div class="mur x7 y9"></div>
+            <div class="mur x7 y10"></div>
+
+            <div class="mur x8 y0"></div>
+            <div class="mur x8 y1"></div>
+            <div class="mur x8 y2"></div>
+            <div class="mur x8 y3"></div>
+            <div class="sol x8 y4"></div>
+            <div class="sol x8 y5"></div>
+            <div class="sol x8 y6"></div>
+            <div class="mur x8 y7"></div>
+            <div class="mur x8 y8"></div>
+            <div class="mur x8 y9"></div>
+            <div class="mur x8 y10"></div>
+
+            <div class="mur x9 y0"></div>
+            <div class="mur x9 y1"></div>
+            <div class="mur x9 y2"></div>
+            <div class="mur x9 y3"></div>
+            <div class="sol x9 y4"></div>
+            <div class="sol x9 y5"></div>
+            <div class="sol x9 y6"></div>
+            <div class="mur x9 y7"></div>
+            <div class="mur x9 y8"></div>
+            <div class="mur x9 y9"></div>
+            <div class="mur x9 y10"></div>
+
+            <div class="mur x10 y0"></div>
+            <div class="mur x10 y1"></div>
+            <div class="mur x10 y2"></div>
+            <div class="mur x10 y3"></div>
+            <div class="sol x10 y4"></div>
+            <div class="sol x10 y5"></div>
+            <div class="sol x10 y6"></div>
+            <div class="mur x10 y7"></div>
+            <div class="mur x10 y8"></div>
+            <div class="mur x10 y9"></div>
+            <div class="mur x10 y10"></div>
+        </div>
+        <div id="MenuSaturne" style="font-size: 50px;color: rgb(209, 134, 49);text-align: center;float: left;margin-top: 19%">Saturne</div>
+    </div>
+
+        <div class="mars">
+            <div id="menu" style="font-size: 20px;font-family: 'Press Start 2P', cursive;">Continuez En Scrollant Vers Le Bas</div>
+            <!--<h1>MARS</h1>-->
+            <img class="planète" src="mars.jpg"></img>
+            <p>
+                Mars (prononcé en français : /maʁs/) est la quatrième planète par ordre de distance croissante au Soleil et la deuxième par 
+                masse et par taille croissantes. Son éloignement au Soleil est compris entre 1,381 et 1,666 UA (206,6 à 249,2 millions de kilomètres), 
+                avec une période orbitale de 669,58 jours martiens (686,71 jours terrestres).
+                <br></br>
+                C’est une planète tellurique, comme le sont Mercure, Vénus et la Terre, environ dix fois moins massive que la Terre mais dix fois 
+                plus massive que la Lune. Sa topographie présente des analogies aussi bien avec la Lune, à travers ses cratères et ses bassins d'impact,
+                 qu'avec la Terre, avec des formations d'origine tectonique et climatique telles que des volcans, des rifts, des vallées, des mesas, des 
+                 champs de dunes et des calottes polaires. Le plus haut volcan du Système solaire, Olympus Mons (qui est un volcan bouclier), et le plus 
+                 grand canyon, Valles Marineris, se trouvent sur Mars.
+                 <br></br>
+                Mars a aujourd'hui perdu la presque totalité de son activité géologique interne, et seuls des événements mineurs surviendraient encore 
+                épisodiquement à sa surface, tels que des glissements de terrain, sans doute des geysers de CO2 dans les régions polaires, peut-être des
+                 séismes, voire de rares éruptions volcaniques sous forme de petites coulées de lave3.
+                 <br></br>
+                La période de rotation de Mars est du même ordre que celle de la Terre et son obliquité lui confère un cycle des saisons similaire à celui
+                 que nous connaissons ; ces saisons sont toutefois marquées par une excentricité orbitale cinq fois et demie plus élevée que celle de la 
+                 Terre, d'où une asymétrie saisonnière sensiblement plus prononcée entre les deux hémisphères.
+                 <br></br>
+                Mars peut être observée à l’œil nu, avec un éclat bien plus faible que celui de Vénus mais qui peut, lors d'oppositions rapprochées, 
+                dépasser l'éclat maximum de Jupiter, atteignant une magnitude apparente de -2,914, tandis que son diamètre apparent varie de 25,1 à 3,5 
+                secondes d'arc selon que sa distance à la Terre varie de 55,7 à 401,3 millions de kilomètres. Mars a toujours été caractérisée visuellement 
+                par sa couleur rouge, due à l'abondance de l'hématite amorphe — oxyde de fer(III) — à sa surface. C'est ce qui l'a fait associer à la guerre 
+                depuis l'Antiquité, d'où son nom en Occident d'après le dieu Mars de la guerre dans la mythologie romaine, assimilé au dieu Arès de la 
+                mythologie grecque. En français,
+                 Mars est souvent surnommée « la planète rouge » en raison de cette couleur particulière.
+                 <br></br>
+                 Avant le survol de Mars par Mariner 4 en 1965, on pensait qu'il s'y trouvait de l'eau liquide en surface et que des formes de vie similaires
+                 à celles existant sur Terre pouvaient s'y être développées, thème très fécond en science-fiction. Les variations saisonnières d'albédo à la
+                 surface de la planète étaient attribuées à de la végétation, tandis que des formations rectilignes perçues dans les lunettes astronomiques
+                 et les télescopes de l'époque étaient interprétées, notamment par l'astronome amateur américain Percival Lowell, comme des canaux 
+                 d'irrigation traversant des étendues désertiques avec de l'eau issue des calottes polaires. Toutes ces spéculations ont été balayées par 
+                 les sondes spatiales qui ont étudié Mars : dès 1965, Mariner 4 permit de découvrir une planète dépourvue de champ magnétique global, avec
+                 une surface cratérisée rappelant celle de la Lune, et une atmosphère ténue.
+                 <br></br>
+                Depuis lors, Mars fait l'objet de programmes d'exploration plus ambitieux que pour tout autre objet du Système solaire : de tous les astres
+                 que nous connaissons, c'est en effet celui qui présente l'environnement ayant le plus de similitudes avec celui de notre planète. Cette 
+                 exploration intensive nous a apporté une bien meilleure compréhension de l'histoire géologique martienne, révélant notamment l'existence
+                  d'une époque reculée — le Noachien — où les conditions en surface devaient être assez similaires à celles de la Terre à la même époque, 
+                  avec la présence de grandes quantités d'eau liquide ; la sonde Phoenix a ainsi découvert à l'été 2008 de la glace d'eau à une faible 
+                  profondeur dans le sol de Vastitas Borealis5.
+                  <br></br>
+                Mars possède deux petits satellites naturels, Phobos et Déimos.
+            </p>
+            <button onclick="window.location.reload()" style="font-size: 20px;font-family: 'Press Start 2P', cursive;">Aller Au Menu</button>
+        </div>
+
+        <div class="saturne">
+            <div id="menu" style="font-size: 20px;font-family: 'Press Start 2P', cursive;">Continuez En Scrollant Vers Le Bas</div>
+            <img class="planète" style="background-size: cover;" src="saturne.webp"></img>
+            <p>
+                Saturne est la sixième planète du Système solaire par ordre d'éloignement au Soleil et la deuxième plus grande par la taille et la masse 
+                après Jupiter, qui est comme elle une planète géante gazeuse. Son rayon moyen de 58 232 km est environ neuf fois et demi celui de la 
+                Terre et sa masse de 568,46 × 1024 kg est 95 fois plus grande. Orbitant en moyenne à environ 1,4 milliard de kilomètres du Soleil (9,5 
+                unités astronomiques), sa période de révolution vaut un peu moins de 30 années tandis que sa période de rotation est estimée à 10 h 33 
+                min.
+                <br></br>
+                La caractéristique la plus célèbre de la planète est son système d'anneaux proéminent. Composés principalement de particules de glace 
+                et de poussières, ils sont observés pour la première fois en 1610 par Galilée et se seraient formés il y a moins de 100 millions d'années. 
+                De plus, elle est la planète possédant le plus grand nombre de satellites naturels avec 82 confirmés et des centaines de satellites mineurs 
+                dans son cortège. Sa plus grande lune, Titan, est également la deuxième plus grande du Système solaire — son diamètre étant plus grand que 
+                celui de la planète Mercure — et est la seule lune connue à posséder une atmosphère substantielle. Une autre lune remarquable, Encelade, 
+                émet de puissants geysers de glace et serait un habitat potentiel pour la vie microbienne.
+                <br></br>
+                L'intérieur de Saturne est très probablement composé d'un noyau rocheux de silicates et de fer entouré de couches constituées en volume à 
+                96 % d'hydrogène qui est successivement métallique puis liquide puis gazeux, mêlé à de l'hélium. Ainsi, elle ne possède pas de surface 
+                solide et est la planète ayant la densité moyenne la plus faible avec 0,69 g/cm3 — soit 70 % de celle de l'eau. Un courant électrique 
+                dans la couche d'hydrogène métallique donne naissance à sa magnétosphère, la deuxième plus grande du Système solaire mais beaucoup plus 
+                petite que celle de Jupiter. L'atmosphère de Saturne est généralement terne et manque de contraste, bien que des caractéristiques de longue 
+                durée puissent apparaître comme un hexagone à son pôle nord. Les vents sur Saturne peuvent atteindre une vitesse de 1 800 km/h, soit les 
+                deuxièmes plus rapides du Système solaire après ceux de Neptune. Elle a été explorée par quatre sondes spatiales : Pioneer 11, Voyager 1 
+                et 2 puis Cassini-Huygens (du nom de deux astronomes ayant grandement fait avancer les connaissances sur le système saturnien au xviie 
+                siècle).
+                <br></br>
+                Observable à l'œil nu dans le ciel nocturne grâce à sa magnitude apparente moyenne de 0,46 — bien qu'ayant un éclat plus faible que celui 
+                des autres planètes —, elle est connue depuis la Préhistoire et a ainsi longtemps été la planète la plus éloignée du Soleil connue. Aussi, 
+                son observation a inspiré des mythes et elle porte le nom du dieu romain de l'agriculture Saturne (Cronos dans la mythologie grecque), son 
+                symbole astronomique ♄ représentant la faucille du dieu.
+            </p>
+            <button onclick="window.location.reload()" style="font-size: 20px;font-family: 'Press Start 2P', cursive;">Aller Au Menu</button>
+        </div>
+    </body>
+</html>
